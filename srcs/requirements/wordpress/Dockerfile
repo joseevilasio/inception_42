@@ -1,0 +1,11 @@
+FROM debian
+
+WORKDIR ./
+
+COPY conf
+
+RUN 
+
+EXPOSE
+
+CMD
