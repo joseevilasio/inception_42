@@ -35,8 +35,16 @@ if [ ! -f wp-config.php ]; then
       --allow-root
 fi
 
-echo ">> Installing WordPress …"
+# Inject WP_HOME and WP_SITEURL if not already present
+if ! grep -q "WP_HOME" wp-config.php; then
+    echo ">> Injection WP_HOME and WP_SITEURL into wp-config.php..."
+    sed -i "/<?php/a \
+define('WP_HOME', '${WP_URL}');\n\
+define('WP_SITEURL', '${WP_URL}');" wp-config.php
+fi
+
 # Install Wordpress
+echo ">> Installing WordPress …"
 if ! wp core is-installed --allow-root; then
     wp core install \
       --url="$WP_URL" \
