@@ -2,22 +2,59 @@ version: "3.8"
 
 services:
   mariadb:
-    build: ./mariadb/Dockerfile
+    build:
+      context: requirements/mariadb/.
     container_name: mariadb
+    restart: on-failure
     networks:
       - inception
     ports:
       - "3306:3306"
-    environment:
-      MYSQL_ROOT_PASSWORD:
-      MYSQL_DATABASE:
-      MYSQL_USER:
-      MYSQL_PASSWORD:
+    env_file:
+      - .env
     volumes:
-      - ${DATA_PATH}:/var/lib/mysql
+      - ${DB_PATH}:/var/lib/mysql
 
-volumes:
-  ${DATA_PATH}: {}
+  wordpress:
+    build:
+      context: requirements/wordpress/.
+    container_name: wordpress
+    restart: on-failure
+    depends_on:
+      - mariadb
+    networks:
+      - inception
+    ports:
+      - "9000"
+    env_file:
+      - .env
+    volumes:
+      - ${WP_PATH}:/var/www/html
+
+  nginx:
+    build:
+      context: requirements/nginx/.
+      args:
+        - CRED_PATH
+        - CRED_CERT
+        - CRED_KEY
+        - COUNTRY
+        - STATE
+        - LOCAL
+        - ORGANIZATION
+        - DOMAIN_NAME
+    container_name: nginx
+    restart: on-failure
+    depends_on:
+      - wordpress
+    networks:
+      - inception
+    ports:
+      - "443:443"
+    env_file:
+      - .env
+    volumes:
+      - ${WP_PATH}:/var/www/html
 
 networks:
   inception:
