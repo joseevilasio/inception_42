@@ -5,7 +5,7 @@ services:
     build:
       context: requirements/mariadb/.
     container_name: mariadb
-    restart: on-failure
+    restart: always
     networks:
       - inception
     ports:
@@ -19,7 +19,7 @@ services:
     build:
       context: requirements/wordpress/.
     container_name: wordpress
-    restart: on-failure
+    restart: always
     depends_on:
       - mariadb
     networks:
@@ -44,7 +44,7 @@ services:
         - ORGANIZATION
         - DOMAIN_NAME
     container_name: nginx
-    restart: on-failure
+    restart: always
     depends_on:
       - wordpress
     networks:
