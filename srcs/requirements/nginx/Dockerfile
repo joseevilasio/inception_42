@@ -1,6 +1,18 @@
-FROM debian:bullseye
+FROM debian:bookworm
 
-ARG DEBIAN_FRONTEND=noninteractive CRED_PATH CRED_CERT CRED_KEY COUNTRY STATE LOCAL ORGANIZATION DOMAIN_NAME
+ARG DEBIAN_FRONTEND=noninteractive
+ARG CRED_PATH
+ARG CRED_CERT
+ARG CRED_KEY
+ARG COUNTRY
+ARG STATE
+ARG LOCAL
+ARG ORGANIZATION
+ARG DOMAIN_NAME
+
+RUN rm -f /etc/apt/sources.list.d/debian.sources && \
+	printf "Types: deb\nURIs: http://deb.debian.org/debian\nSuites: bookworm bookworm-updates\nComponents: main contrib non-free\n" \
+	> /etc/apt/sources.list.d/debian.sources
 
 RUN apt-get update && apt-get install -y nginx openssl gettext-base\
 	&& apt-get clean && rm -rf /var/lib/apt/lists/*

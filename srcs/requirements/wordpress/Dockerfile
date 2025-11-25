@@ -1,10 +1,11 @@
-FROM debian:bullseye
+FROM debian:bookworm
 
 ARG DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update && apt-get install -y \
-	php7.4-fpm php7.4-mysql php7.4-gd php7.4-mbstring php7.4-xml \
-	wget mariadb-client \
+	php-fpm php-mysql php-gd php-mbstring php-xml \
+	php-curl php-zip php-intl php-soap \
+	wget mariadb-client unzip \
 	&& apt-get clean && rm -rf /var/lib/apt/lists/*
 
 RUN wget https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar \
@@ -17,9 +18,10 @@ RUN wget https://wordpress.org/wordpress-6.1.3.tar.gz \
 	&& tar -xzvf wordpress-6.1.3.tar.gz \
 	&& rm wordpress-6.1.3.tar.gz
 
-COPY conf/www.conf /etc/php/7.4/fpm/pool.d/www.conf
+COPY conf/www.conf /etc/php/8.2/fpm/pool.d/www.conf
 
 COPY /tools/entrypoint.sh /tools/entrypoint.sh
+RUN chmod +x /tools/entrypoint.sh
 
 EXPOSE 9000
 

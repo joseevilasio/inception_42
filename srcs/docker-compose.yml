@@ -2,20 +2,23 @@ version: "3.8"
 
 services:
   mariadb:
+    image: mariadb
     build:
       context: requirements/mariadb/.
     container_name: mariadb
     restart: always
     networks:
       - inception
-    ports:
-      - "3306:3306"
     env_file:
       - .env
     volumes:
       - ${DB_PATH}:/var/lib/mysql
+    secrets:
+      - db_root_password
+      - db_password
 
   wordpress:
+    image: wordpress
     build:
       context: requirements/wordpress/.
     container_name: wordpress
@@ -24,14 +27,17 @@ services:
       - mariadb
     networks:
       - inception
-    ports:
-      - "9000"
     env_file:
       - .env
     volumes:
       - ${WP_PATH}:/var/www/html
+    secrets:
+      - credentials
+      - db_root_password
+      - db_password
 
   nginx:
+    image: nginx
     build:
       context: requirements/nginx/.
       args:
@@ -54,8 +60,16 @@ services:
     env_file:
       - .env
     volumes:
-      - ${WP_PATH}:/var/www/html
+      - ${WP_PATH}:/var/www/html:ro
 
 networks:
   inception:
     driver: bridge
+
+secrets:
+  db_root_password:
+    file: ../secrets/db_root_password
+  db_password:
+    file: ../secrets/db_password
+  credentials:
+    file: ../secrets/credentials

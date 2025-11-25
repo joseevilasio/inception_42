@@ -1,27 +1,24 @@
 NAME = inception
-
 COMPOSE = docker compose -f srcs/docker-compose.yml
+
+all: $(NAME)
 
 $(NAME):
 	$(COMPOSE) build
 	$(COMPOSE) up -d
 
-all: $(NAME)
-
 up:
 	$(COMPOSE) up -d
 
+down:
+	$(COMPOSE) down
+
 clean:
-	$(COMPOSE) compose down
+	$(COMPOSE) down --remove-orphans
 
-fclean:
-	- docker stop $$(docker ps -qa) 2>/dev/null || true
-	- docker rm $$(docker ps -qa) 2>/dev/null || true
-	- docker rmi -f $$(docker images -qa) 2>/dev/null || true
-	- docker volume rm $$(docker volume ls -qa) 2>/dev/null || true
-	- docker network rm $$(docker network ls -q) 2>/dev/null || true
+fclean: clean
+	$(COMPOSE) down -v --rmi all --remove-orphans
 
-re: fclean
-	$(MAKE) all
+re: fclean all
 
-.PHONY: all up clean fclean re $(NAME)
+.PHONY: all up down clean fclean re $(NAME)
