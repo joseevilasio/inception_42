@@ -12,7 +12,7 @@ services:
     env_file:
       - .env
     volumes:
-      - ${DB_PATH}:/var/lib/mysql
+      - v_db:/var/lib/mysql
     secrets:
       - db_root_password
       - db_password
@@ -30,7 +30,7 @@ services:
     env_file:
       - .env
     volumes:
-      - ${WP_PATH}:/var/www/html
+      - v_web:/var/www/html
     secrets:
       - credentials
       - db_root_password
@@ -60,11 +60,26 @@ services:
     env_file:
       - .env
     volumes:
-      - ${WP_PATH}:/var/www/html:ro
+      - v_web:/var/www/html:ro
 
 networks:
   inception:
     driver: bridge
+
+volumes:
+  v_web:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${WP_PATH}
+
+  v_db:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${DB_PATH}
 
 secrets:
   db_root_password:

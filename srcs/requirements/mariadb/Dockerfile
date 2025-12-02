@@ -15,8 +15,6 @@ COPY conf/database.cnf /etc/mysql/mariadb.conf.d/database.cnf
 COPY /tools/entrypoint.sh /tools/entrypoint.sh
 RUN chmod +x /tools/entrypoint.sh
 
-EXPOSE 3306
-
 VOLUME ["/var/lib/mysql"]
 
 ENTRYPOINT ["/tools/entrypoint.sh"]

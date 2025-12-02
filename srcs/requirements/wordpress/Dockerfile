@@ -23,6 +23,4 @@ COPY conf/www.conf /etc/php/8.2/fpm/pool.d/www.conf
 COPY /tools/entrypoint.sh /tools/entrypoint.sh
 RUN chmod +x /tools/entrypoint.sh
 
-EXPOSE 9000
-
 ENTRYPOINT ["/tools/entrypoint.sh"]
